@@ -1,8 +1,8 @@
-import { Webhook } from "svix";
 import connectDB from "#/config/db";
 import User from "#/models/User";
 import { headers } from "next/headers";
 import { NextRequest } from "next/server";
+import { Webhook } from "svix";
 
 export async function POST(req) {
   const wh = new Webhook(process.env.SIGNING_SECRET);
@@ -36,10 +36,6 @@ export async function POST(req) {
       break;
     case "user.deleted":
       await User.findByIdAndDelete(data.id);
-
-      break;
-    default:
-      break;
   }
   return NextRequest.json({ message: "Event received" });
 }

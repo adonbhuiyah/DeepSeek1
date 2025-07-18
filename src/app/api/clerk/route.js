@@ -1,8 +1,8 @@
 import connectDB from "#/config/db";
 import User from "#/models/User";
 import { headers } from "next/headers";
+import { NextRequest } from "next/server";
 import { Webhook } from "svix";
-import { NextResponse } from "next/server";
 
 export async function POST(req) {
   const wh = new Webhook(process.env.SIGNING_SECRET);
@@ -16,37 +16,28 @@ export async function POST(req) {
 
   const payload = await req.json();
   const body = JSON.stringify(payload);
+  const { data, type } = wh.verify(body, svixHeaders);
 
-  try {
-    const { data, type } = wh.verify(body, svixHeaders);
+  const userData = {
+    _id: data.id,
+    name: `${data.first_name} ${data.last_name}`,
+    email: data.email_addresses[0].email_address, // ✅ FIXED THIS
+    image: data.image_url,
+  };
 
-    const userData = {
-      _id: data.id,
-      name: `${data.first_name} ${data.last_name}`,
-      email: data.email_addresses[0].email_address,
-      image: data.image_url,
-    };
+  await connectDB();
 
-    console.log("Webhook type:", type);
-    console.log("Saving user:", userData);
-
-    await connectDB();
-
-    switch (type) {
-      case "user.created":
-        await User.create(userData);
-        break;
-      case "user.updated":
-        await User.findByIdAndUpdate(data.id, userData);
-        break;
-      case "user.deleted":
-        await User.findByIdAndDelete(data.id);
-        break;
-    }
-
-    return NextResponse.json({ message: "Event received" });
-  } catch (error) {
-    console.error("Webhook processing error:", error);
-    return NextResponse.json({ error: "Invalid webhook" }, { status: 400 });
+  switch (type) {
+    case "user.created":
+      await User.create(userData);
+      break;
+    case "user.updated":
+      await User.findByIdAndUpdate(data.id, userData);
+      break;
+    case "user.deleted":
+      await User.findByIdAndDelete(data.id);
+      break;
   }
+
+  return NextRequest.json({ message: "Message received" });
 }

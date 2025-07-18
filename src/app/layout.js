@@ -1,7 +1,7 @@
+import { AppContextProvider } from "@/context/AppContext";
+import { ClerkProvider } from "@clerk/nextjs";
 import { Inter } from "next/font/google";
 import "./global.css";
-import { ClerkProvider } from "@clerk/nextjs";
-import { AppContextProvider } from "@/context/AppContext";
 const inter = Inter({
   subsets: ["latin"],
 });
@@ -55,12 +55,6 @@ export const metadata = {
       maxVideoPreview: -1,
     },
   },
-
-  // 🎨 Theming for Light/Dark Mode
-  themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#ffffff" },
-    { media: "(prefers-color-scheme: dark)", color: "#0f172a" }, // Tailwind slate-900
-  ],
 
   // 🕰️ Viewport & Charset (Optional for <head> injection)
   viewport: "width=device-width, initial-scale=1, object-fit=cover",

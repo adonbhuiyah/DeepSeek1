@@ -15,7 +15,7 @@ const PromptBox = ({isLoading,setIsLoading}) => {
         placeholder="Message DeepSeek"
         required onInput={(e)=>setPrompt(e.target.value) } spellCheck="false" 
         rows="2"
-      >{prompt}</textarea>
+      value={prompt} />
       <div className="flex items-center justify-between text-sm">
         <div className="flex items-center gap-2">
           <p className="flex cursor-pointer items-center gap-2 rounded-full border border-gray-300/40 px-2 py-1 text-xs transition hover:bg-gray-500/20">
